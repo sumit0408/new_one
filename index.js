@@ -1,55 +1,67 @@
-// CRUD : Creation of DB, Read(Query), Update, Delete ....
-
-
-const { MongoClient } = require('mongodb');
+const {MongoClient} = require("mongodb");
 const uri = 'mongodb://localhost:27017';
-const dbName = 'Yaar';
-const client = new MongoClient(uri, { useUnifiedTopology: true });
+const dbName = "Hello";
+const client = new MongoClient(uri, {useUnifiedTopology: true});
 
-async function main() {
-  try {
-    await client.connect();
-    console.log('Connected to the database');
-    const db = client.db(dbName);
+async function main(){
+    try{
+        await client.connect();
+        console.log('Connected to the Database..');
 
-    const collection = db.collection('profile');
-    // await collection.insertMany([
-    // {name:"Sumit Singh",
-    //  age:21,
-    //  section:"AIML"},
-    // {name:"Raman Baliyan",
-    //  age:21,
-    //  section:"AIML"},
-    // {name:"Yashi Chaudhary",
-    //  age:22,
-    //  section:"AI"},
-    // {name:"Mukul Tyagi",
-    //  age:24,
-    //  section:"CSE"
-    // },
-    // {name:"Anshul Chauhan",
-    //  age:20,
-    //  section:"GNM"}
-    // ]);
-    // console.log('Document inserted successfully');
+        const db = client.db(dbName);
+        const collection = db.collection("super");
 
-    // await collection.deleteMany({});
+        // insertion (ONE && MANY)...
+        // await collection.insertOne({
+        //     item: 'canvas',
+        //     qty: 100,
+        //     tags: ['cotton'],
+        //     size: { h: 28, w: 35.5, uom: 'cm' }
+        //   });
 
-    await collection.updateOne({name:"Sumit Singh"},{$set:{age:23}})
+        // await collection.insertMany([
+        //     {
+        //       item: 'journal',
+        //       qty: 25,
+        //       tags: ['blank', 'red'],
+        //       size: { h: 14, w: 21, uom: 'cm' }
+        //     },
+        //     {
+        //       item: 'mat',
+        //       qty: 85,
+        //       tags: ['gray'],
+        //       size: { h: 27.9, w: 35.5, uom: 'cm' }
+        //     },
+        //     {
+        //       item: 'mousepad',
+        //       qty: 25,
+        //       tags: ['gel', 'blue'],
+        //       size: { h: 19, w: 22.85, uom: 'cm' }
+        //     }
+        //   ]);
 
+        // await collection.deleteOne({item:"canvas"});
+        
+        // updation....
+        await collection.updateOne(
+            { item: 'mousepad' },
+            {
+              $set: { 'size.uom': 'cm', status: 'P' },
+              $currentDate: { lastModified: true }
+            }
+          );
+        
+        const documents = await collection.find({}).toArray();
+        console.log(documents);
 
-    const documents = await collection.find({}).toArray();
-    console.log('Documents:', documents);
-  } 
-  catch (error) {
-    console.error('Error:', error);
-  } 
-  finally 
-  {
-    // Close the connection when done
-    await client.close();
-    console.log('Connection closed');
-  }
+    }
+    catch(error){
+        console.log('Error:',error);
+    }
+    finally{
+        await client.close();
+        console.log('Connection Closed.');
+    }
 }
 
 main().catch(console.error);
